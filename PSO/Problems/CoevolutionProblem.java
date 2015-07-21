@@ -97,9 +97,10 @@ public class CoevolutionProblem extends Problem
 		NeuralNetwork tempPlayer1NeuralNet = new NeuralNetwork(NUM_LAYERS, numLayerNodes, (BIAS == 1));
 		tempPlayer1NeuralNet.setWeights(tempPlayer1Weights);
 
-		ExecutorService threadPool = Executors.newFixedThreadPool(numRandomPlays);
-		Set<Future<Integer>> set = new HashSet<Future<Integer>>();
+//		ExecutorService threadPool = Executors.newFixedThreadPool(1);
+//		Set<Future<Integer>> set = new HashSet<Future<Integer>>();
 
+		Double score = 0.0d;
 		for(int c = 0; c < numRandomPlays; c++)
 		{
 			int random = RandomGenerator.getInstance().getRandomRangedIntValue(swarmPositions.size()-1);
@@ -125,17 +126,17 @@ public class CoevolutionProblem extends Problem
 
 			//Play Game
 			Callable<Integer> callable = new PlayGameThread(tempPlayer1NeuralNet, tempPlayer2NeuralNet, PLY_DEPTH, ALPHA_BETA);
-			Future<Integer> future = threadPool.submit(callable);
-			set.add(future);
+//			Future<Integer> future = threadPool.submit(callable);
+			score += getResultScore(callable.call());
+//			set.add(future);
 		}
 
-		Double score = 0.0d;
 
-		for (Future<Integer> future : set) {
-			score += getResultScore(future.get());
-		}
+//		for (Future<Integer> future : set) {
+//			score += getResultScore(future.get());
+//		}
 
-		threadPool.shutdown();
+//		threadPool.shutdown();
 		return score;
 	}
 

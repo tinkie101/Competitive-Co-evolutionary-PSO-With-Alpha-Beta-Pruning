@@ -42,7 +42,7 @@ public class Coevolution
 
 		double finalResult = 0.0d;
 
-		for(int e = 0; e < 1; e++)
+		for(int e = 0; e < 15; e++)
 		{
 
 			//1
@@ -77,8 +77,8 @@ public class Coevolution
 			//4
 			System.out.println("Playing as Player 1");
 
-			ExecutorService threadPool = Executors.newFixedThreadPool(NUM_THREADS);
-			Set<Future<Integer>> set = new HashSet<Future<Integer>>();
+//			ExecutorService threadPool = Executors.newFixedThreadPool(NUM_THREADS);
+//			Set<Future<Integer>> set = new HashSet<Future<Integer>>();
 
 			NeuralNetwork tempNeuralNet = CoevolutionProblem.getNewNeuralNetwork();
 
@@ -100,12 +100,8 @@ public class Coevolution
 			for (int i = 0; i < NUM_CONTROL_GAMES; i++)
 			{
 				Callable<Integer> callable = new PlayGameThread(tempNeuralNet, null, PlyDepth, AlphaBeta);
-				Future<Integer> future = threadPool.submit(callable);
-				set.add(future);
-			}
 
-			for (Future<Integer> future : set) {
-				switch (future.get())
+				switch (callable.call())
 				{
 					case 0:
 						losePlayer1++;
@@ -119,24 +115,41 @@ public class Coevolution
 					default:
 						throw new Exception("Invalid result!");
 				}
+//				Future<Integer> future = threadPool.submit(callable);
+//				set.add(future);
 			}
+
+//			for (Future<Integer> future : set) {
+//				switch (future.get())
+//				{
+//					case 0:
+//						losePlayer1++;
+//						break;
+//					case 1:
+//						winPlayer1++;
+//						break;
+//					case 2:
+//						drawPlayer1++;
+//						break;
+//					default:
+//						throw new Exception("Invalid result!");
+//				}
+//			}
 
 			//5
 			System.out.println("Playing as Player 2");
 
-			threadPool.shutdown();
-			threadPool = Executors.newFixedThreadPool(NUM_THREADS);
-			set = new HashSet<Future<Integer>>();
+//			threadPool.shutdown();
+//			threadPool = Executors.newFixedThreadPool(NUM_THREADS);
+//			set = new HashSet<Future<Integer>>();
 
 			for (int i = 0; i < NUM_CONTROL_GAMES; i++)
 			{
 				Callable<Integer> callable = new PlayGameThread(null, tempNeuralNet, PlyDepth, AlphaBeta);
-				Future<Integer> future = threadPool.submit(callable);
-				set.add(future);
-			}
+//				Future<Integer> future = threadPool.submit(callable);
+//				set.add(future);
 
-			for (Future<Integer> future : set) {
-				switch (future.get())
+				switch (callable.call())
 				{
 					case 0:
 						winPlayer2++;
@@ -152,7 +165,24 @@ public class Coevolution
 				}
 			}
 
-			threadPool.shutdown();
+//			for (Future<Integer> future : set) {
+//				switch (future.get())
+//				{
+//					case 0:
+//						winPlayer2++;
+//						break;
+//					case 1:
+//						losePlayer2++;
+//						break;
+//					case 2:
+//						drawPlayer2++;
+//						break;
+//					default:
+//						throw new Exception("Invalid result!");
+//				}
+//			}
+
+//			threadPool.shutdown();
 
 			double Player1WinScore = (double) winPlayer1 / (double) NUM_CONTROL_GAMES * 3.0d;
 			double Player1LoseScore = (double) losePlayer1 / (double) NUM_CONTROL_GAMES * 1.0d;
@@ -182,7 +212,7 @@ public class Coevolution
 
 		long startTime = System.currentTimeMillis();
 	//TODO settings!
-		Coevolution coevolution = new Coevolution(4, true);
+		Coevolution coevolution = new Coevolution(1, true);
 		coevolution.runCoevolution(500);
 
 		long endTime = System.currentTimeMillis();

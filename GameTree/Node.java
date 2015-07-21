@@ -16,6 +16,7 @@ public class Node{
     private boolean max;
     private Double val;
 	private boolean isJump;
+    private Node bestChild;
 
     public Node(Checkers gameState, boolean max) throws Exception{
         this.gameState = gameState;
@@ -28,18 +29,25 @@ public class Node{
     public Node(Checkers gameState, Node parent, boolean max, boolean isJump) throws Exception{
         this.gameState = gameState;
         this.children = new LinkedList<Node>();
+
         this.parent = parent;
         this.max = max;
 		this.isJump = isJump;
     }
 
-    public void updateValue(Double val){
-        if(this.val == null || (this.max && val > this.val) || (!this.max && val < this.val))
+    public void updateValue(Double val, Node child){
+        if(this.val == null || (this.max && val > this.val) || (!this.max && val < this.val)) {
             this.val = val.doubleValue();
+            this.bestChild = child;
+        }
     }
 
     public Double getValue(){
         return this.val;
+    }
+
+    public Node getBestChild(){
+        return bestChild;
     }
 
     public void setVal(Double val){

@@ -50,8 +50,13 @@ public class GameTree {
 
         for(int i = 0; i < children.size(); i++)
         {
-            if(children.get(i).getValue().equals(temp.getValue()))
-                return children.get(i);
+
+
+			if(children.get(i) == temp.getBestChild()) {
+				if(!children.get(i).getValue().equals(temp.getValue()))
+					System.exit(-1);
+				return children.get(i);
+			}
         }
 
         throw new Exception("Couldn't find next Move!");
@@ -69,7 +74,7 @@ public class GameTree {
         for(int i = 0; i < children.size(); i++)
         {
             Node temp = getLeaf(children.get(i), Checkers.getOpponent(player));
-            currentNode.updateValue(temp.getValue());
+            currentNode.updateValue(temp.getValue(), temp);
         }
         return currentNode;
     }
@@ -90,7 +95,7 @@ public class GameTree {
 
         for(int c = 0; c < children.size(); c++)
 		{
-            currentNode.updateValue(expandChildrenAlphaBeta(level + 1, children.get(c), Checkers.getOpponent(player), !max));
+            currentNode.updateValue(expandChildrenAlphaBeta(level + 1, children.get(c), Checkers.getOpponent(player), !max), children.get(c));
 
 			if(parent != null && parent.getValue() != null && currentNode.getValue() != null){
 				if(max ){
