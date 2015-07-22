@@ -21,12 +21,14 @@ public class Coevolution
 	private static int x = 3, y = 3, z = 3;
 	private PSO pso;
 	private int PlyDepth;
-	private boolean AlphaBeta;
+	private Boolean AlphaBeta;
+	private double probability;
 
-	Coevolution(int plyDepth, boolean alphaBeta) throws Exception{
+	Coevolution(int plyDepth, Boolean alphaBeta, double probability) throws Exception{
 
 		this.PlyDepth = plyDepth;
 		this.AlphaBeta = alphaBeta;
+		this.probability = probability;
 
 	}
 
@@ -38,7 +40,7 @@ public class Coevolution
 		{
 
 			//1
-			CoevolutionProblem problem = new CoevolutionProblem(NUM_RANDOM_PLAYS, MAX_NUM_MOVES, PlyDepth, AlphaBeta);
+			CoevolutionProblem problem = new CoevolutionProblem(NUM_RANDOM_PLAYS, MAX_NUM_MOVES, PlyDepth, AlphaBeta, probability);
 			Neighbourhood neighbourhood = new VonNeumann(x, y, z);
 
 			pso = new PSO(false, problem, numParticles, neighbourhood);
@@ -87,7 +89,7 @@ public class Coevolution
 
 			for (int i = 0; i < NUM_CONTROL_GAMES; i++)
 			{
-				PlayGame tempGame = new PlayGame(tempNeuralNet, null, PlyDepth, AlphaBeta, MAX_NUM_MOVES);
+				PlayGame tempGame = new PlayGame(tempNeuralNet, null, PlyDepth, AlphaBeta, MAX_NUM_MOVES, probability);
 
 				switch (tempGame.play())
 				{
@@ -110,7 +112,7 @@ public class Coevolution
 
 			for (int i = 0; i < NUM_CONTROL_GAMES; i++)
 			{
-				PlayGame tempGame = new PlayGame(null, tempNeuralNet, PlyDepth, AlphaBeta, MAX_NUM_MOVES);
+				PlayGame tempGame = new PlayGame(null, tempNeuralNet, PlyDepth, AlphaBeta, MAX_NUM_MOVES, probability);
 
 				switch (tempGame.play())
 				{
@@ -156,8 +158,13 @@ public class Coevolution
 
 		long startTime = System.currentTimeMillis();
 	//TODO settings!
-		Coevolution coevolution = new Coevolution(1, false);
-		coevolution.runCoevolution(500);
+		double probability = 1.0d;
+		Boolean AlphaBeta = true;
+		int plyDepth = 2;
+		int numEpochs = 500;
+
+		Coevolution coevolution = new Coevolution(plyDepth, AlphaBeta, probability);
+		coevolution.runCoevolution(numEpochs);
 
 		long endTime = System.currentTimeMillis();
 		System.out.println("\nTook " + ((endTime - startTime) / 1000.0d) + " seconds");

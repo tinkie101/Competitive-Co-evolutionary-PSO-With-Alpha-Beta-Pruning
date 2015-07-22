@@ -34,6 +34,15 @@ public class GameTree {
             expandChildren(0, currentNode, player, true);
     }
 
+//	public void generateRandomPruneTree(int player, int depth, Double probability) throws Exception{
+//		PLY_DEPTH = depth;
+//		root = new Node(game.clone(), true);
+//		Node currentNode = root;
+//
+//		//Build game tree
+//		expandChildrenRandom(0, currentNode, player, true, probability);
+//	}
+
 	public Node getRandomMove(int player) throws Exception{
 		generateTree(player, 1, false);
 
@@ -76,6 +85,32 @@ public class GameTree {
         return currentNode;
     }
 
+	//Random Pruning
+	public void expandChildrenRandom(int level, Node currentNode, int player, boolean max, Double probability) throws Exception{
+		if (level >= PLY_DEPTH)
+			return;
+
+		expandNode(currentNode, player, !max);
+		LinkedList<Node> children = currentNode.getChildren();
+
+		for(int c = 0; c < children.size(); c++)
+		{
+			Double randomNumber = RandomGenerator.getInstance().getRandomDoubleValue();
+
+			//Prune randomly
+			if(c != 0 && randomNumber < probability){
+				int size = children.size();
+
+				for(int i = c; i < size; i++)
+					children.remove(c);
+
+				break;
+			}
+
+			expandChildrenRandom(level + 1, children.get(c), Checkers.getOpponent(player), !max, probability);
+		}
+
+	}
 
     //Alpha-Beta Pruning
     public Double expandChildrenAlphaBeta(int level, Node currentNode, int player, boolean max) throws Exception{
@@ -126,7 +161,6 @@ public class GameTree {
     private void expandNode(Node currentNode, int player, boolean max ) throws Exception{
         Checkers tempCurrentGame = currentNode.getGame();
 
-        LinkedList<Integer[]> nextMoves = tempCurrentGame.getAllPossibleMoves(player);
         LinkedList<Integer[]> nextJumps = tempCurrentGame.getAllPossibleJumps(player);
 
 		boolean hasJumps = false;
@@ -220,6 +254,8 @@ public class GameTree {
 		//Jumps are compulsory, so if there are jumps, moves are unnecessary to expand
 		if(!hasJumps)
 		{
+			LinkedList<Integer[]> nextMoves = tempCurrentGame.getAllPossibleMoves(player);
+
 			//Moves
 			for (int l = 0; l < nextMoves.size(); l++)
 			{

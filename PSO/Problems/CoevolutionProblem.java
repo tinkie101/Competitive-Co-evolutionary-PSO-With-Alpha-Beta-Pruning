@@ -24,7 +24,8 @@ public class CoevolutionProblem extends Problem
 
 
 	private int PLY_DEPTH;
-	private boolean ALPHA_BETA;
+	private Boolean ALPHA_BETA;
+	private double probability;
 
 
 	private int numRandomPlays;
@@ -33,7 +34,7 @@ public class CoevolutionProblem extends Problem
 
 
 	//Hard code the problem function parameters
-	public CoevolutionProblem(int numRandomPlays, int max_moves, int ply_depth, boolean alpha_beta) throws Exception
+	public CoevolutionProblem(int numRandomPlays, int max_moves, int ply_depth, Boolean alpha_beta, double probability) throws Exception
 	{
 		super( numWeights );
 
@@ -43,6 +44,7 @@ public class CoevolutionProblem extends Problem
 		this.PLY_DEPTH = ply_depth;
 		this.ALPHA_BETA = alpha_beta;
 		this.max_moves = max_moves;
+		this.probability = probability;
 	}
 
 	public static NeuralNetwork getNewNeuralNetwork() throws Exception{
@@ -117,7 +119,7 @@ public class CoevolutionProblem extends Problem
 			tempPlayer2NeuralNet.setWeights(tempPlayer2Weights);
 
 			//Play Game
-			PlayGame tempGame = new PlayGame(tempPlayer1NeuralNet, tempPlayer2NeuralNet, PLY_DEPTH, ALPHA_BETA, max_moves);
+			PlayGame tempGame = new PlayGame(tempPlayer1NeuralNet, tempPlayer2NeuralNet, PLY_DEPTH, ALPHA_BETA, max_moves, probability);
 			score += getResultScore(tempGame.play());
 		}
 
