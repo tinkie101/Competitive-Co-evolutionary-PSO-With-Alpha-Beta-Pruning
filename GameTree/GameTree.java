@@ -34,14 +34,14 @@ public class GameTree {
             expandChildren(0, currentNode, player, true);
     }
 
-//	public void generateRandomPruneTree(int player, int depth, Double probability) throws Exception{
-//		PLY_DEPTH = depth;
-//		root = new Node(game.clone(), true);
-//		Node currentNode = root;
-//
-//		//Build game tree
-//		expandChildrenRandom(0, currentNode, player, true, probability);
-//	}
+	public void generateRandomPruneTree(int player, int depth, Double probability) throws Exception{
+		PLY_DEPTH = depth;
+		root = new Node(game.clone(), true);
+		Node currentNode = root;
+
+		//Build game tree
+		expandChildrenRandom(0, currentNode, player, true, probability);
+	}
 
 	public Node getRandomMove(int player) throws Exception{
 		generateTree(player, 1, false);
