@@ -3,7 +3,6 @@ package GameTree;
 import Game.Checkers.Checkers;
 import NeuralNetwork.NeuralNetwork;
 import Utils.RandomGenerator;
-import sun.reflect.annotation.ExceptionProxy;
 
 import java.util.LinkedList;
 
@@ -27,7 +26,7 @@ public class GameTree {
 		PLY_DEPTH = depth;
         root = new Node(game.clone(), true);
         Node currentNode = root;
-//        root.printState();
+
         //Build game tree
         if(AlphaBeta)
             expandChildrenAlphaBeta(0, currentNode, player, true);
