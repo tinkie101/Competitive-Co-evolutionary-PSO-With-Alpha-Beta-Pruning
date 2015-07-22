@@ -52,7 +52,7 @@ public class GameTree {
         {
 			if(children.get(i) == temp.getBestChild()) {
 				if(!children.get(i).getValue().equals(temp.getValue()))
-					System.exit(-1);
+					throw new Exception("Invalid best child for root node!");
 				return children.get(i);
 			}
         }
