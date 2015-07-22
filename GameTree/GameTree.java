@@ -142,7 +142,7 @@ public class GameTree {
 			Integer[] newPos = {jump[2],jump[3]};
 
 			LinkedList<Integer[]> tempJumps = newGame.getJumps(newPos);
-			LinkedList<Integer[]> forceJumps = new LinkedList<Integer[]>();
+			LinkedList<Integer[]> forceJumps = new LinkedList<>();
 
 			Integer[] temp;
 
@@ -160,7 +160,7 @@ public class GameTree {
 				if (newGame.shouldKing(newPos))
 					newGame.king(newPos);
 
-				Node child = new Node(newGame, currentNode, max, true);
+				Node child = new Node(newGame, currentNode, max);
 				currentNode.addChild(child);
 				hasJumps = true;
 			}
@@ -186,7 +186,7 @@ public class GameTree {
 					if (forceNewGame.shouldKing(tempNewPos)) {
 						//Stop jumping
 						forceNewGame.king(tempNewPos);
-						Node child = new Node(forceNewGame, currentNode, max, true);
+						Node child = new Node(forceNewGame, currentNode, max);
 						currentNode.addChild(child);
 						hasJumps = true;
 					} else {
@@ -205,7 +205,7 @@ public class GameTree {
 
 						if (tempForceJumps.size() < 1) {
 							//Stop jumping
-							Node child = new Node(forceNewGame, currentNode, max, true);
+							Node child = new Node(forceNewGame, currentNode, max);
 							currentNode.addChild(child);
 							hasJumps = true;
 						} else {
@@ -236,15 +236,15 @@ public class GameTree {
 					newGame.king(newPos);
 				}
 
-				Node child = new Node(newGame, currentNode, max, false);
+				Node child = new Node(newGame, currentNode, max);
 				currentNode.addChild(child);
 			}
 		}
     }
 
-    public static void main(String[] args) throws Exception{
-        Checkers game = new Checkers();
-
+//    public static void main(String[] args) throws Exception{
+//        Checkers game = new Checkers();
+//
 //        int[][] tempBoard = game.getCurrentBoardState();
 //
 //        for(int i = 0; i < tempBoard.length; i++)
@@ -284,7 +284,7 @@ public class GameTree {
 //            }
 //        }
 //        game.setCurrentBoardState(tempBoard);
-
+//
 //		GameTree gameTree;
 //		Node nextMove;
 //
@@ -333,5 +333,5 @@ public class GameTree {
 //
 //		}
 //		System.out.println("Done");
-    }
+//    }
 }

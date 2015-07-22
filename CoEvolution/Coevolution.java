@@ -1,20 +1,12 @@
 package CoEvolution;
 
-import GameTree.PlayGameThread;
+import GameTree.PlayGame;
 import NeuralNetwork.NeuralNetwork;
 import PSO.Neighbourhoods.Neighbourhood;
 import PSO.Neighbourhoods.VonNeumann;
 import PSO.PSO;
 import PSO.Particle;
 import PSO.Problems.CoevolutionProblem;
-
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Set;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 /**
  * Created by tinkie101 on 2015/06/25.
@@ -23,7 +15,7 @@ public class Coevolution
 {
 	public static final int NUM_RANDOM_PLAYS = 5;
 	public static final int NUM_CONTROL_GAMES = 10000;
-	public static final int NUM_THREADS = 1000;
+	public static int MAX_NUM_MOVES = 50;
 
 	private static int numParticles = 27;
 	private static int x = 3, y = 3, z = 3;
@@ -46,7 +38,7 @@ public class Coevolution
 		{
 
 			//1
-			CoevolutionProblem problem = new CoevolutionProblem(NUM_RANDOM_PLAYS, PlyDepth, AlphaBeta);
+			CoevolutionProblem problem = new CoevolutionProblem(NUM_RANDOM_PLAYS, MAX_NUM_MOVES, PlyDepth, AlphaBeta);
 			Neighbourhood neighbourhood = new VonNeumann(x, y, z);
 
 			pso = new PSO(false, problem, numParticles, neighbourhood);
@@ -68,7 +60,6 @@ public class Coevolution
 				pso.runUpdateStep();
 			}
 
-
 			//3
 			Particle gBest = pso.getGlobalBest();
 			Double[] position = gBest.getPBestPosition();
@@ -76,9 +67,6 @@ public class Coevolution
 
 			//4
 			System.out.println("Playing as Player 1");
-
-//			ExecutorService threadPool = Executors.newFixedThreadPool(NUM_THREADS);
-//			Set<Future<Integer>> set = new HashSet<Future<Integer>>();
 
 			NeuralNetwork tempNeuralNet = CoevolutionProblem.getNewNeuralNetwork();
 
@@ -99,9 +87,9 @@ public class Coevolution
 
 			for (int i = 0; i < NUM_CONTROL_GAMES; i++)
 			{
-				Callable<Integer> callable = new PlayGameThread(tempNeuralNet, null, PlyDepth, AlphaBeta);
+				PlayGame tempGame = new PlayGame(tempNeuralNet, null, PlyDepth, AlphaBeta, MAX_NUM_MOVES);
 
-				switch (callable.call())
+				switch (tempGame.play())
 				{
 					case 0:
 						losePlayer1++;
@@ -115,41 +103,16 @@ public class Coevolution
 					default:
 						throw new Exception("Invalid result!");
 				}
-//				Future<Integer> future = threadPool.submit(callable);
-//				set.add(future);
 			}
-
-//			for (Future<Integer> future : set) {
-//				switch (future.get())
-//				{
-//					case 0:
-//						losePlayer1++;
-//						break;
-//					case 1:
-//						winPlayer1++;
-//						break;
-//					case 2:
-//						drawPlayer1++;
-//						break;
-//					default:
-//						throw new Exception("Invalid result!");
-//				}
-//			}
 
 			//5
 			System.out.println("Playing as Player 2");
 
-//			threadPool.shutdown();
-//			threadPool = Executors.newFixedThreadPool(NUM_THREADS);
-//			set = new HashSet<Future<Integer>>();
-
 			for (int i = 0; i < NUM_CONTROL_GAMES; i++)
 			{
-				Callable<Integer> callable = new PlayGameThread(null, tempNeuralNet, PlyDepth, AlphaBeta);
-//				Future<Integer> future = threadPool.submit(callable);
-//				set.add(future);
+				PlayGame tempGame = new PlayGame(null, tempNeuralNet, PlyDepth, AlphaBeta, MAX_NUM_MOVES);
 
-				switch (callable.call())
+				switch (tempGame.play())
 				{
 					case 0:
 						winPlayer2++;
@@ -164,25 +127,6 @@ public class Coevolution
 						throw new Exception("Invalid result!");
 				}
 			}
-
-//			for (Future<Integer> future : set) {
-//				switch (future.get())
-//				{
-//					case 0:
-//						winPlayer2++;
-//						break;
-//					case 1:
-//						losePlayer2++;
-//						break;
-//					case 2:
-//						drawPlayer2++;
-//						break;
-//					default:
-//						throw new Exception("Invalid result!");
-//				}
-//			}
-
-//			threadPool.shutdown();
 
 			double Player1WinScore = (double) winPlayer1 / (double) NUM_CONTROL_GAMES * 3.0d;
 			double Player1LoseScore = (double) losePlayer1 / (double) NUM_CONTROL_GAMES * 1.0d;
@@ -212,7 +156,7 @@ public class Coevolution
 
 		long startTime = System.currentTimeMillis();
 	//TODO settings!
-		Coevolution coevolution = new Coevolution(1, true);
+		Coevolution coevolution = new Coevolution(1, false);
 		coevolution.runCoevolution(500);
 
 		long endTime = System.currentTimeMillis();

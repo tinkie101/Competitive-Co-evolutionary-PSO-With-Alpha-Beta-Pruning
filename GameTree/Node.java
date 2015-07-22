@@ -15,7 +15,6 @@ public class Node{
     private Node parent;
     private boolean max;
     private Double val;
-	private boolean isJump;
     private Node bestChild;
 
     public Node(Checkers gameState, boolean max) throws Exception{
@@ -26,13 +25,12 @@ public class Node{
         this.max = max;
     }
 
-    public Node(Checkers gameState, Node parent, boolean max, boolean isJump) throws Exception{
+    public Node(Checkers gameState, Node parent, boolean max) throws Exception{
         this.gameState = gameState;
         this.children = new LinkedList<Node>();
 
         this.parent = parent;
         this.max = max;
-		this.isJump = isJump;
     }
 
     public void updateValue(Double val, Node child){
@@ -104,9 +102,6 @@ public class Node{
 	}
 
 	public Double calculateFitness(int player, NeuralNetwork neuralNetwork) throws Exception{
-
-		//TODO get player's boardState values, Feed into neuralNetwork and get output
-
 		int[][] board = gameState.getCurrentBoardState();
 		Double[][] input = new Double[32][1];
 		int count = 0;

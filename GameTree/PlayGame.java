@@ -3,15 +3,15 @@ package GameTree;
 import Game.Checkers.Checkers;
 import NeuralNetwork.NeuralNetwork;
 
-import java.util.concurrent.Callable;
-
 /**
  * Created by tinkie101 on 2015/07/01.
  */
-public class PlayGameThread implements Callable
+public class PlayGame
 {
 	public static final int PLAYER1 = 1;
 	public static final int PLAYER2 = 2;
+
+	public int MAX_NUM_MOVES;
 
 	private int PLY_DEPTH;
 	private boolean ALPHA_BETA;
@@ -20,16 +20,16 @@ public class PlayGameThread implements Callable
 	private NeuralNetwork tempPlayer1NeuralNet;
 	private NeuralNetwork tempPlayer2NeuralNet;
 
-	public PlayGameThread(final NeuralNetwork tempPlayer1NeuralNet, final NeuralNetwork tempPlayer2NeuralNet, int ply_depth, boolean alpha_beta){
+	public PlayGame(final NeuralNetwork tempPlayer1NeuralNet, final NeuralNetwork tempPlayer2NeuralNet, int ply_depth, boolean alpha_beta, int max_moves){
 		this.tempPlayer1NeuralNet =  tempPlayer1NeuralNet;
 		this.tempPlayer2NeuralNet = tempPlayer2NeuralNet;
 
+		this.MAX_NUM_MOVES = max_moves;
 		this.PLY_DEPTH = ply_depth;
 		this.ALPHA_BETA = alpha_beta;
 	}
 
-	@Override
-	public Integer call()
+	public Integer play()
 	{
 		try
 		{
@@ -38,7 +38,7 @@ public class PlayGameThread implements Callable
 			Node nextMove;
 
 			int moveCount = 0;
-			while (moveCount < 50)
+			while (moveCount < MAX_NUM_MOVES)
 			{
 				if (game.hasLost(PLAYER1))
 				{

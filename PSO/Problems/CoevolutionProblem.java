@@ -2,15 +2,10 @@ package PSO.Problems;
 
 import NeuralNetwork.NeuralNetwork;
 import Utils.RandomGenerator;
-import GameTree.PlayGameThread;
+import GameTree.PlayGame;
 
-import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.Set;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 /**
  * Created by tinkie101 on 2015/02/25.
@@ -33,11 +28,12 @@ public class CoevolutionProblem extends Problem
 
 
 	private int numRandomPlays;
+	private int max_moves;
 	private NeuralNetwork mockNeuralNet;
 
 
 	//Hard code the problem function parameters
-	public CoevolutionProblem(int numRandomPlays, int ply_depth, boolean alpha_beta) throws Exception
+	public CoevolutionProblem(int numRandomPlays, int max_moves, int ply_depth, boolean alpha_beta) throws Exception
 	{
 		super( numWeights );
 
@@ -46,6 +42,7 @@ public class CoevolutionProblem extends Problem
 		this.numRandomPlays = numRandomPlays;
 		this.PLY_DEPTH = ply_depth;
 		this.ALPHA_BETA = alpha_beta;
+		this.max_moves = max_moves;
 	}
 
 	public static NeuralNetwork getNewNeuralNetwork() throws Exception{
@@ -56,7 +53,7 @@ public class CoevolutionProblem extends Problem
 		NeuralNetwork temp = new NeuralNetwork(NUM_LAYERS, numLayerNodes, (BIAS == 1));
 
 		Double[][][] weights = temp.getWeights();
-		LinkedList<Double> tempList = new LinkedList<Double>();
+		LinkedList<Double> tempList = new LinkedList<>();
 
 
 		for(int i = 0; i < weights.length; i++)
@@ -70,9 +67,7 @@ public class CoevolutionProblem extends Problem
 			}
 		}
 
-		Double[] array = tempList.toArray(new Double[tempList.size()]);
-
-		return array;
+		return tempList.toArray(new Double[tempList.size()]);
 	}
 
 	@Override
@@ -96,9 +91,6 @@ public class CoevolutionProblem extends Problem
 
 		NeuralNetwork tempPlayer1NeuralNet = new NeuralNetwork(NUM_LAYERS, numLayerNodes, (BIAS == 1));
 		tempPlayer1NeuralNet.setWeights(tempPlayer1Weights);
-
-//		ExecutorService threadPool = Executors.newFixedThreadPool(1);
-//		Set<Future<Integer>> set = new HashSet<Future<Integer>>();
 
 		Double score = 0.0d;
 		for(int c = 0; c < numRandomPlays; c++)
@@ -125,18 +117,10 @@ public class CoevolutionProblem extends Problem
 			tempPlayer2NeuralNet.setWeights(tempPlayer2Weights);
 
 			//Play Game
-			Callable<Integer> callable = new PlayGameThread(tempPlayer1NeuralNet, tempPlayer2NeuralNet, PLY_DEPTH, ALPHA_BETA);
-//			Future<Integer> future = threadPool.submit(callable);
-			score += getResultScore(callable.call());
-//			set.add(future);
+			PlayGame tempGame = new PlayGame(tempPlayer1NeuralNet, tempPlayer2NeuralNet, PLY_DEPTH, ALPHA_BETA, max_moves);
+			score += getResultScore(tempGame.play());
 		}
 
-
-//		for (Future<Integer> future : set) {
-//			score += getResultScore(future.get());
-//		}
-
-//		threadPool.shutdown();
 		return score;
 	}
 

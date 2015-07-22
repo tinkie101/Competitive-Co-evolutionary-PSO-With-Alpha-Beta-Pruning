@@ -4,13 +4,7 @@ import PSO.Neighbourhoods.Neighbourhood;
 import PSO.Problems.CoevolutionProblem;
 import PSO.Problems.Problem;
 
-import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.Set;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 /**
  * Created by tinkie101 on 2015/02/22.
@@ -19,21 +13,20 @@ import java.util.concurrent.Future;
 public class PSO
 {
 
-	class CalculateFitnessThread implements Callable
+	class CalculateFitness
 	{
 		private final Double[] position;
 		private final LinkedList<Double[]> swarmPositions;
 		private final Particle particle;
 
-		CalculateFitnessThread(final Double[] position, final LinkedList<Double[]> swarmPositions, Particle particle)
+		CalculateFitness(final Double[] position, final LinkedList<Double[]> swarmPositions, Particle particle)
 		{
 			this.position = position;
 			this.swarmPositions = swarmPositions;
 			this.particle = particle;
 		}
 
-		@Override
-		public Particle call()
+		public Particle getFitness()
 		{
 			try
 			{
@@ -75,7 +68,7 @@ public class PSO
 		this.swarm = new Particle[numParticles];
 
 		//Create swarm particles
-		LinkedList<Double[]> tempSwarm = new LinkedList<Double[]>();
+		LinkedList<Double[]> tempSwarm = new LinkedList<>();
 		for (int i = 0; i < numParticles; i++)
 		{
 			Particle tempParticle = new Particle(problem, CoevolutionProblem.generateRandomWeights());
@@ -86,9 +79,6 @@ public class PSO
 			tempSwarm.add(tempParticle.getPBestPosition());
 		}
 
-//		ExecutorService threadPool = Executors.newFixedThreadPool(tempSwarm.size());
-//		Set<Future<Particle>> set = new HashSet<Future<Particle>>();
-
 		//Calculate each particle's initial pBest
 		for (int i = 0, count = 0; i < tempSwarm.size(); i+=2, count++)
 		{
@@ -97,23 +87,14 @@ public class PSO
 			if(tempSwarm.size() != (swarm.length*2)-1)
 				throw new Exception("Invalid tempSwarm size!");
 
-			Callable<Particle> callable =  new CalculateFitnessThread(position, (LinkedList<Double[]>) tempSwarm.clone(), swarm[count]);
-//			Future<Particle> future = threadPool.submit(callable);
-//			set.add(future);
+			CalculateFitness tempCalculateFitness =  new CalculateFitness(position, (LinkedList<Double[]>) tempSwarm.clone(), swarm[count]);
 
 
-			Particle tempParticle = callable.call();
+			Particle tempParticle = tempCalculateFitness.getFitness();
 			tempParticle.setPBestValue(tempParticle.getFitnessValue());
 
 			tempSwarm.add(i,position);
 		}
-
-//		for (Future<Particle> future : set) {
-//			Particle tempParticle = future.get();
-//			tempParticle.setPBestValue(tempParticle.getFitnessValue());
-//		}
-//
-//		threadPool.shutdown();
 
 		neighbourhood.setParticles(swarm);
 	}
@@ -160,16 +141,13 @@ public class PSO
 		}
 
 
-		LinkedList<Double[]> tempSwarm = new LinkedList<Double[]>();
+		LinkedList<Double[]> tempSwarm = new LinkedList<>();
 
 		for(int l = 0; l < numParticles; l++)
 		{
 			tempSwarm.add(swarm[l].getPosition());
 			tempSwarm.add(swarm[l].getPBestPosition());
 		}
-
-//		ExecutorService threadPool = Executors.newFixedThreadPool(tempSwarm.size());
-//		Set<Future<Particle>> set = new HashSet<Future<Particle>>();
 
 		//  1) set each particle's pBest
 		for (int i = 0, count = 0; i < tempSwarm.size(); i+=2, count++)
@@ -179,11 +157,9 @@ public class PSO
 			if(tempSwarm.size() != (swarm.length*2)-1)
 				throw new Exception("Invalid tempSwarm size!");
 
-			Callable<Particle> callable =  new CalculateFitnessThread(position, (LinkedList<Double[]>) tempSwarm.clone(), swarm[count]);
-//			Future<Particle> future = threadPool.submit(callable);
-//			set.add(future);
+			CalculateFitness tempCalculateFitness =  new CalculateFitness(position, (LinkedList<Double[]>) tempSwarm.clone(), swarm[count]);
 
-			Particle particle = callable.call();
+			Particle particle = tempCalculateFitness.getFitness();
 			Double newFitness = particle.getFitnessValue();
 			Double[] newPosition = particle.getPosition();
 
@@ -207,32 +183,6 @@ public class PSO
 
 			tempSwarm.add(i, position);
 		}
-
-//		for (Future<Particle> future : set) {
-//			Particle particle = future.get();
-//			Double newFitness = particle.getFitnessValue();
-//			Double[] position = particle.getPosition();
-//
-//			double pBestFitness = particle.getPBestValue();
-//
-//			if (minimisation)
-//			{
-//				if (pBestFitness > newFitness)
-//				{
-//					particle.setPBestPosition(position);
-//					particle.setPBestValue(newFitness);
-//				}
-//			} else //maximization
-//			{
-//				if (pBestFitness < newFitness)
-//				{
-//					particle.setPBestPosition(position);
-//					particle.setPBestValue(newFitness);
-//				}
-//			}
-//		}
-//
-//		threadPool.shutdown();
 
 		return swarm;
 	}
