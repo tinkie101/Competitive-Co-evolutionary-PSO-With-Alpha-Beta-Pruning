@@ -50,8 +50,6 @@ public class GameTree {
 
         for(int i = 0; i < children.size(); i++)
         {
-
-
 			if(children.get(i) == temp.getBestChild()) {
 				if(!children.get(i).getValue().equals(temp.getValue()))
 					System.exit(-1);
