@@ -8,7 +8,11 @@ import java.io.*;
 public class FileHandler {
     public static void writeFile(String fileName, String content) throws IOException {
         try {
-            BufferedWriter out = new BufferedWriter(new FileWriter(fileName));
+            File file = new File(fileName);
+            file.getParentFile().mkdirs();
+            FileWriter writer = new FileWriter(file);
+
+            BufferedWriter out = new BufferedWriter(writer);
             out.write(content);
             out.close();
         } catch (IOException e) {
