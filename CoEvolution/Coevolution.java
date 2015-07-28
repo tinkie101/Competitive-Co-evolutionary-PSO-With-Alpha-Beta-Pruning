@@ -226,7 +226,7 @@ public class Coevolution
 	//TODO settings!
 		double probability = 0.1d;
 		Boolean AlphaBeta = false;
-		int plyDepth = 1;
+		int plyDepth = 4;
 		int numEpochs = 500;
 
 		Coevolution coevolution = new Coevolution(plyDepth, AlphaBeta, probability);
