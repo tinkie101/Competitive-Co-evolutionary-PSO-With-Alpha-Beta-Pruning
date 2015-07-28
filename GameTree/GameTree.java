@@ -93,21 +93,20 @@ public class GameTree {
 		expandNode(currentNode, player, !max);
 		LinkedList<Node> children = currentNode.getChildren();
 
-		for(int c = 0; c < children.size(); c++)
+		int size = children.size();
+
+		for(int c = 0; c < size; c++)
 		{
 			Double randomNumber = RandomGenerator.getInstance().getRandomDoubleValue();
 
 			//Prune randomly
-			if(c != 0 && randomNumber < probability){
-				int size = children.size();
-
-				for(int i = c; i < size; i++)
-					children.remove(c);
-
-				break;
+			if(!(c == 0 && children.size() <= 1) && randomNumber < probability){
+				children.remove(c);
+				size = children.size();
+				c--;
 			}
-
-			expandChildrenRandom(level + 1, children.get(c), Checkers.getOpponent(player), !max, probability);
+			else
+				expandChildrenRandom(level + 1, children.get(c), Checkers.getOpponent(player), !max, probability);
 		}
 
 	}
