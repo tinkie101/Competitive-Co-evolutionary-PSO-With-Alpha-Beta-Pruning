@@ -34,7 +34,7 @@ public class Coevolution {
     private Boolean AlphaBeta;
     private double probability;
 
-    Coevolution(Boolean alphaBeta, double probability) throws Exception {
+    public Coevolution(Boolean alphaBeta, double probability) throws Exception {
         this.AlphaBeta = alphaBeta;
         this.probability = probability;
     }
@@ -211,60 +211,5 @@ public class Coevolution {
         stringBuilder.append(finalResult);
         FileHandler.writeFile("output/" + time + "/AverageFMeasure.txt", stringBuilder.toString());
 
-    }
-
-    public static void main(String[] args) throws Exception {
-//TODO
-//                    DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-//                    DocumentBuilder builder = factory.newDocumentBuilder();
-//
-//                    // Load the input XML document, parse it and return an instance of the
-//                    // Document class.
-//                    Document document = builder.parse(new File(args[0]));
-//
-//
-//                    List<Employee> employees = new ArrayList<Employee>();
-//
-//                    NodeList nodeList = document.getDocumentElement().getChildNodes();
-//
-//                    for (int i = 0; i < nodeList.getLength(); i++) {
-//                        Node node = nodeList.item(i);
-//
-//                        if (node.getNodeType() == Node.ELEMENT_NODE) {
-//                            Element elem = (Element) node;
-//
-//                            // Get the value of the ID attribute.
-//                            String ID = node.getAttributes().getNamedItem("ID").getNodeValue();
-//
-//                            // Get the value of all sub-elements.
-//                            String firstname = elem.getElementsByTagName("Firstname").item(0).getChildNodes().item(0).getNodeValue();
-//
-//                            String lastname = elem.getElementsByTagName("Lastname").item(0).getChildNodes().item(0).getNodeValue();
-//
-//                            Integer age = Integer.parseInt(elem.getElementsByTagName("Age").item(0).getChildNodes().item(0).getNodeValue());
-//
-//                            Double salary = Double.parseDouble(elem.getElementsByTagName("Salary").item(0).getChildNodes().item(0).getNodeValue());
-//
-//                            employees.add(new Employee(ID, firstname, lastname, age, salary));
-//                        }
-//                    }
-//
-//
-//                    // Print all employees.
-//                    for (Employee empl : employees)
-//                        System.out.println(empl.toString());
-
-
-        long startTime = System.currentTimeMillis();
-        //TODO settings!
-        double probability = 0.1d;
-        Boolean AlphaBeta = false;
-        int numEpochs = 500;
-
-        Coevolution coevolution = new Coevolution(AlphaBeta, probability);
-        coevolution.runCoevolution(numEpochs);
-
-        long endTime = System.currentTimeMillis();
-        System.out.println("\nTook " + ((endTime - startTime) / 1000.0d) + " seconds");
     }
 }
