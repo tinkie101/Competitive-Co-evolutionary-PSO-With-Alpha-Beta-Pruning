@@ -39,28 +39,24 @@ public class Coevolution {
         this.probability = probability;
     }
 
-    public void runCoevolution(int numEpochs) throws Exception {
+    public void runCoevolution(int numEpochs, String output) throws Exception {
 
         double finalResult = 0.0d;
         StringBuilder stringBuilder = new StringBuilder();
         double time = System.currentTimeMillis();
 
         //TODO Remove
-        stringBuilder.append("NUM_RANDOM_PLAYS: " + NUM_RANDOM_PLAYS + "\n");
-        stringBuilder.append("NUM_CONTROL_GAMES: " + NUM_CONTROL_GAMES + "\n");
-        stringBuilder.append("NUM_RUNS: " + NUM_RUNS + "\n");
-        stringBuilder.append("MAX_NUM_MOVES: " + MAX_NUM_MOVES + "\n");
-        stringBuilder.append("NUM_PARTICLES: " + NUM_PARTICLES + "\n");
-        stringBuilder.append("PlyDepth: " + PLY_DEPTH + "\n");
-        stringBuilder.append("AlphaBeta: " + AlphaBeta + "\n");
-        stringBuilder.append("probability: " + probability + "\n");
+        stringBuilder.append("# Iteration\n");
+        stringBuilder.append("# measurement.pso.Fitness\n");
+        stringBuilder.append("# measurement.nn.Weights\n");
+        stringBuilder.append("# measurement.player1.FMeasure\n");
+        stringBuilder.append("# measurement.player2.FMeasure\n");
+        stringBuilder.append("# measurement.final.FMeasure\n");
 
-        FileHandler.writeFile("output/" + time + "/Settings.txt", stringBuilder.toString());
 
         for (int e = 0; e < NUM_RUNS; e++) {
-            stringBuilder = new StringBuilder();
+            stringBuilder.append(e + " ");
             System.out.println("Run " + e + " of " + NUM_RUNS);
-            stringBuilder.append("Run " + e + " of " + (NUM_RUNS - 1) + "\n");
             //1
             CoevolutionProblem problem = new CoevolutionProblem(NUM_RANDOM_PLAYS, MAX_NUM_MOVES, PLY_DEPTH, AlphaBeta, probability);
             Neighbourhood neighbourhood = new VonNeumann(x, y, z);
@@ -94,14 +90,13 @@ public class Coevolution {
             Double[] position = gBest.getPBestPosition();
 
             System.out.println("\nStart: " + startVal + "; End: " + gBest.getPBestValue());
-            stringBuilder.append("Start: " + startVal + "; End: " + gBest.getPBestValue() + "\n");
+            stringBuilder.append(gBest.getPBestValue() + " ");
 
             //4
             NeuralNetwork tempNeuralNet = CoevolutionProblem.getNewNeuralNetwork();
             Double[][][] tempPlayerWeights = tempNeuralNet.getWeights();
 
-            stringBuilder.append("NN Weights: ");
-            stringBuilder.append(gBest.toString() + "\n");
+            stringBuilder.append(gBest.toString() + " ");
 
             int count = 0;
             for (int n = 0; n < tempPlayerWeights.length; n++) {
@@ -168,23 +163,22 @@ public class Coevolution {
             double Player1LoseScore = (double) losePlayer1 / (double) NUM_CONTROL_GAMES * 1.0d;
             double Player1DrawScore = (double) drawPlayer1 / (double) NUM_CONTROL_GAMES * 2.0d;
             double Player1Score = Player1DrawScore + Player1LoseScore + Player1WinScore;
-            stringBuilder.append("Player1 win/lose/draw: " + winPlayer1 + "/" + losePlayer1 + "/" + drawPlayer1 + "\n");
 
             double tempScore = ((2.0d) * (Player1Score - 1.0d)) / (2.0d);
             tempScore = tempScore / 2.0d * 100.0d;
 
-            stringBuilder.append("Player1 Score: " + tempScore + "\n");
+            stringBuilder.append(tempScore + " ");
 
             double Player2WinScore = (double) winPlayer2 / (double) NUM_CONTROL_GAMES * 3.0d;
             double Player2LoseScore = (double) losePlayer2 / (double) NUM_CONTROL_GAMES * 1.0d;
             double Player2DrawScore = (double) drawPlayer2 / (double) NUM_CONTROL_GAMES * 2.0d;
             double Player2Score = Player2DrawScore + Player2LoseScore + Player2WinScore;
 
-            stringBuilder.append("Player2 win/lose/draw: " + winPlayer2 + "/" + losePlayer2 + "/" + drawPlayer2 + "\n");
 
             tempScore = ((2.0d) * (Player2Score - 1.0d)) / (2.0d);
             tempScore = tempScore / 2.0d * 100.0d;
-            stringBuilder.append("Player2 Score: " + tempScore + "\n");
+
+            stringBuilder.append(tempScore + " ");
 
             double finalScore = (Player1Score + Player2Score) / 2.0d;
             finalScore = ((2.0d) * (finalScore - 1.0d)) / (2.0d);
@@ -192,24 +186,15 @@ public class Coevolution {
             finalResult += finalScore;
             System.out.println("==========================================");
             System.out.println("Final Score:" + finalScore);
-            stringBuilder.append("F-measure: " + finalScore + "\n");
+            //TODO
+            stringBuilder.append(finalScore);
             System.out.println("==========================================\n");
 
-            String ab = "null";
-            if (AlphaBeta != null)
-                ab = AlphaBeta.toString();
-
-            FileHandler.writeFile("output/" + time + "/" + PLY_DEPTH + "-" + ab + "-" + probability + "-" + e + ".txt", stringBuilder.toString());
+            FileHandler.writeFile(output, stringBuilder.toString());
         }
-
-
-        stringBuilder = new StringBuilder();
 
         System.out.println("==========================================");
         finalResult = finalResult / NUM_RUNS;
         System.out.println("Final Result:" + finalResult);
-        stringBuilder.append(finalResult);
-        FileHandler.writeFile("output/" + time + "/AverageFMeasure.txt", stringBuilder.toString());
-
     }
 }

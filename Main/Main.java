@@ -151,16 +151,24 @@ public class Main {
         }
 
 
-        long startTime = System.currentTimeMillis();
-//        //TODO settings!
-        double probability = 0.1d;
-        Boolean AlphaBeta = false;
-        int numEpochs = 500;
+        for(int i = 0; i < simulationList.size(); i++){
+            long startTime = System.currentTimeMillis();
 
-        Coevolution coevolution = new Coevolution(AlphaBeta, probability);
-        coevolution.runCoevolution(numEpochs);
+            Simulation simulation = simulationList.get(i);
+            Algorithm algorithm = simulation.get_algorithm();
+            Measurements _measurements = simulation.get_measurements();
 
-        long endTime = System.currentTimeMillis();
-        System.out.println("\nTook " + ((endTime - startTime) / 1000.0d) + " seconds");
+            double probability = algorithm.getProbability();
+            Boolean AlphaBeta = algorithm.getAlphaBeta();
+            int numEpochs = _measurements.get_resolution();
+
+            String output = simulation.get_output();
+
+            Coevolution coevolution = new Coevolution(AlphaBeta, probability);
+            coevolution.runCoevolution(numEpochs, output);
+
+            long endTime = System.currentTimeMillis();
+            System.out.println("\nTook " + ((endTime - startTime) / 1000.0d) + " seconds");
+        }
     }
 }
