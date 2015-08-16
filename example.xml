@@ -19,7 +19,6 @@
     </problems>
     <measurements id="measurements" class="simulator.MeasurementSuite" resolution="50">
         <addMeasurement class="measurement.pso.Fitness"/>
-        <addMeasurement class="measurement.nn.Weights"/>
         <addMeasurement class="measurement.player1.FMeasure"/>
         <addMeasurement class="measurement.player2.FMeasure"/>
         <addMeasurement class="measurement.final.FMeasure"/>

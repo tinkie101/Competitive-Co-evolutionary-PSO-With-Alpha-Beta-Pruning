@@ -48,7 +48,6 @@ public class Coevolution {
         //TODO Remove
         stringBuilder.append("# Iteration\n");
         stringBuilder.append("# measurement.pso.Fitness\n");
-        stringBuilder.append("# measurement.nn.Weights\n");
         stringBuilder.append("# measurement.player1.FMeasure\n");
         stringBuilder.append("# measurement.player2.FMeasure\n");
         stringBuilder.append("# measurement.final.FMeasure\n");
@@ -56,7 +55,7 @@ public class Coevolution {
 
         for (int e = 0; e < NUM_RUNS; e++) {
             stringBuilder.append(e + " ");
-            System.out.println("Run " + e + " of " + NUM_RUNS);
+            System.out.println("Run " + (e+1) + " of " + NUM_RUNS);
             //1
             CoevolutionProblem problem = new CoevolutionProblem(NUM_RANDOM_PLAYS, MAX_NUM_MOVES, PLY_DEPTH, AlphaBeta, probability);
             Neighbourhood neighbourhood = new VonNeumann(x, y, z);
@@ -95,8 +94,6 @@ public class Coevolution {
             //4
             NeuralNetwork tempNeuralNet = CoevolutionProblem.getNewNeuralNetwork();
             Double[][][] tempPlayerWeights = tempNeuralNet.getWeights();
-
-            stringBuilder.append(gBest.toString() + " ");
 
             int count = 0;
             for (int n = 0; n < tempPlayerWeights.length; n++) {
