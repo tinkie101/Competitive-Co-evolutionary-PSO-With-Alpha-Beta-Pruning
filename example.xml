@@ -31,40 +31,28 @@
             <output format="TXT" file="data/normal.txt"/>
         </simulation>
         <simulation samples="30">
-            <algorithm idref="alphabeta"/>
+            <algorithm idref="normal"/>
             <problem idref="checkers"/>
             <measurements idref="measurements" />
-            <output format="TXT" file="data/alphabeta.txt"/>
+            <output format="TXT" file="data/normal.txt"/>
         </simulation>
         <simulation samples="30">
-            <algorithm idref="random1"/>
+            <algorithm idref="normal"/>
             <problem idref="checkers"/>
             <measurements idref="measurements" />
-            <output format="TXT" file="data/random1.txt"/>
+            <output format="TXT" file="data/normal.txt"/>
         </simulation>
         <simulation samples="30">
-            <algorithm idref="random3"/>
+            <algorithm idref="normal"/>
             <problem idref="checkers"/>
             <measurements idref="measurements" />
-            <output format="TXT" file="data/random3.txt"/>
+            <output format="TXT" file="data/normal.txt"/>
         </simulation>
         <simulation samples="30">
-            <algorithm idref="random5"/>
+            <algorithm idref="normal"/>
             <problem idref="checkers"/>
             <measurements idref="measurements" />
-            <output format="TXT" file="data/random5.txt"/>
-        </simulation>
-        <simulation samples="30">
-            <algorithm idref="random7"/>
-            <problem idref="checkers"/>
-            <measurements idref="measurements" />
-            <output format="TXT" file="data/random7.txt"/>
-        </simulation>
-        <simulation samples="30">
-            <algorithm idref="random9"/>
-            <problem idref="checkers"/>
-            <measurements idref="measurements" />
-            <output format="TXT" file="data/random9.txt"/>
+            <output format="TXT" file="data/normal.txt"/>
         </simulation>
     </simulations>
 </simulator>

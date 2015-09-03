@@ -85,7 +85,7 @@ public class PSO
 			tempSwarm.add(tempParticle.getPBestPosition());
 		}
 
-		ExecutorService threadPool = Executors.newFixedThreadPool(tempSwarm.size());
+		ExecutorService threadPool = Executors.newFixedThreadPool(4);
 		Set<Future<Particle>> set = new HashSet<>();
 
 		//Calculate each particle's initial pBest
@@ -163,7 +163,7 @@ public class PSO
 			tempSwarm.add(swarm[l].getPBestPosition());
 		}
 
-		ExecutorService threadPool = Executors.newFixedThreadPool(tempSwarm.size());
+		ExecutorService threadPool = Executors.newFixedThreadPool(4);
 		Set<Future<Particle>> set = new HashSet<>();
 
 		//  1) set each particle's pBest
