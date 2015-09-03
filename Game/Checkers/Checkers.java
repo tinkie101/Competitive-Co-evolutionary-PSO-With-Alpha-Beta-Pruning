@@ -296,6 +296,10 @@ public class Checkers {
         }
     }
 
+    public boolean gameOver() throws Exception{
+        return (hasLost(1) || hasLost(2));
+    }
+
     public int getPlayer(int cellValue) throws Exception{
 
         if(cellValue == 1 || cellValue == 2)

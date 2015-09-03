@@ -89,16 +89,44 @@ public class Node{
 //        return result;
 //    }
 
-	private double getPieceValue(int cellValue) throws Exception{
-		switch (cellValue){
-			case 0: return 0.5d;
-			case 1: return 0.75d;
-			case 2: return 1.0d;
-			case 3: return 0.25d;
-			case 4: return 0.0d;
-			default: throw new Exception("Invalid Piece value!");
+	private double getPieceValue(int cellValue, int player) throws Exception{
 
-		}
+        if(player == 1) {
+            switch (cellValue) {
+                case 0:
+                    return 0.5d;
+                case 1:
+                    return 0.75d;
+                case 2:
+                    return 1.0d;
+                case 3:
+                    return 0.25d;
+                case 4:
+                    return 0.0d;
+                default:
+                    throw new Exception("Invalid Piece value!");
+
+            }
+        }else if(player == 2){
+            switch (cellValue) {
+                case 0:
+                    return 0.5d;
+                case 1:
+                    return 0.25d;
+                case 2:
+                    return 0.0d;
+                case 3:
+                    return 0.75d;
+                case 4:
+                    return 0.1d;
+                default:
+                    throw new Exception("Invalid Piece value!");
+            }
+        }
+        else
+        {
+            throw new Exception("Invalid Player!");
+        }
 	}
 
 	public Double calculateFitness(int player, NeuralNetwork neuralNetwork) throws Exception{
@@ -112,7 +140,7 @@ public class Node{
 			{
 				int cellVal = board[y][x];
 				if(cellVal != -1)
-					input[count++][0] = getPieceValue(cellVal);
+					input[count++][0] = getPieceValue(cellVal, player);
 			}
 		}
 
