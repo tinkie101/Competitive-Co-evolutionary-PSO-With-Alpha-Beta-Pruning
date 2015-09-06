@@ -59,10 +59,14 @@ public class PSO
 	private Problem problem;
 	private Neighbourhood neighbourhood;
 	private boolean minimisation;
+	private int processors;
 
 	//  1) initialize n-dimensional swarm
 	public PSO(boolean minimisation, Problem problem, int numParticles, Neighbourhood neighbourhood) throws Exception
 	{
+		processors = Runtime.getRuntime().availableProcessors();
+		System.out.println("Number of threads: " + processors);
+
 		this.minimisation = minimisation;
 
 		this.problem = problem;
@@ -85,7 +89,7 @@ public class PSO
 			tempSwarm.add(tempParticle.getPBestPosition());
 		}
 
-		ExecutorService threadPool = Executors.newFixedThreadPool(4);
+		ExecutorService threadPool = Executors.newFixedThreadPool(processors);
 		Set<Future<Particle>> set = new HashSet<>();
 
 		//Calculate each particle's initial pBest
@@ -163,7 +167,7 @@ public class PSO
 			tempSwarm.add(swarm[l].getPBestPosition());
 		}
 
-		ExecutorService threadPool = Executors.newFixedThreadPool(4);
+		ExecutorService threadPool = Executors.newFixedThreadPool(processors);
 		Set<Future<Particle>> set = new HashSet<>();
 
 		//  1) set each particle's pBest
