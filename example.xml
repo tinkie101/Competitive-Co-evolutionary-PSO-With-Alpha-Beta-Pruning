@@ -28,31 +28,31 @@
             <algorithm idref="normal"/>
             <problem idref="checkers"/>
             <measurements idref="measurements" />
-            <output format="TXT" file="data/normal.txt"/>
+            <output format="TXT" file="data/normal1.txt"/>
         </simulation>
         <simulation samples="30">
             <algorithm idref="normal"/>
             <problem idref="checkers"/>
             <measurements idref="measurements" />
-            <output format="TXT" file="data/normal.txt"/>
+            <output format="TXT" file="data/normal2.txt"/>
         </simulation>
         <simulation samples="30">
             <algorithm idref="normal"/>
             <problem idref="checkers"/>
             <measurements idref="measurements" />
-            <output format="TXT" file="data/normal.txt"/>
+            <output format="TXT" file="data/normal3.txt"/>
         </simulation>
         <simulation samples="30">
             <algorithm idref="normal"/>
             <problem idref="checkers"/>
             <measurements idref="measurements" />
-            <output format="TXT" file="data/normal.txt"/>
+            <output format="TXT" file="data/normal4.txt"/>
         </simulation>
         <simulation samples="30">
             <algorithm idref="normal"/>
             <problem idref="checkers"/>
             <measurements idref="measurements" />
-            <output format="TXT" file="data/normal.txt"/>
+            <output format="TXT" file="data/normal5.txt"/>
         </simulation>
     </simulations>
 </simulator>
