@@ -76,18 +76,23 @@ public class Node{
         System.out.println("=================================");
     }
 
-//    public Double calculateFitness(int player, NeuralNetwork neuralNetwork) throws Exception{
-//        Double result = 12.0d;
-//
-//        int opponent = Checkers.getOpponent(player);
-//
-//        if(gameState.hasLost(opponent))
-//            result = -999.9d;
-//        else
-//            result -= gameState.getPlayerPieceCount(opponent);
-//
-//        return result;
-//    }
+    public Double calculateStaticFitness(int player) throws Exception{
+        System.out.println("Calucluating Static Fitness...");
+        Double result = (double)gameState.getPlayerPieceCount(player);
+
+        int opponent = Checkers.getOpponent(player);
+
+        if(gameState.hasLost(opponent))
+            result = 999.9d;
+        else if (gameState.hasLost(player))
+        {
+            result = -999.9d;
+        }
+        else
+            result -= gameState.getPlayerPieceCount(opponent);
+
+        return result;
+    }
 
 	private double getPieceValue(int cellValue, int player) throws Exception{
 
@@ -147,6 +152,10 @@ public class Node{
 		if(count != 32)
 			throw new Exception("Invalid board state!");
 
-		return neuralNetwork.getOutput(input)[0];
+        if(neuralNetwork == null){
+            return calculateStaticFitness(player);
+        }
+        else
+		    return neuralNetwork.getOutput(input)[0];
 	}
 }
