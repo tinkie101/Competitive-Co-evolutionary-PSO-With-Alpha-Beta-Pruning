@@ -15,29 +15,36 @@ public class GameTree {
     private Checkers game;
     private Node root;
 	private NeuralNetwork neuralNetwork;
+	private boolean generatedTree;
+	private int rootPlayer = -1;
 
     public GameTree( Checkers game, NeuralNetwork neuralNetwork){
         this.game = game;
 		this.neuralNetwork = neuralNetwork;
         this.root = null;
+		this.generatedTree = false;
     }
 
     public void generateTree(int player, int depth, boolean AlphaBeta) throws Exception{
 		PLY_DEPTH = depth;
         root = new Node(game.clone(), true);
         Node currentNode = root;
+		this.rootPlayer = player;
 
         //Build game tree
         if(AlphaBeta)
             expandChildrenAlphaBeta(0, currentNode, player, true);
         else
             expandChildren(0, currentNode, player, true);
+
+		generatedTree = true;
     }
 
 	public void generateRandomPruneTree(int player, int depth, Double probability) throws Exception{
 		PLY_DEPTH = depth;
 		root = new Node(game.clone(), true);
 		Node currentNode = root;
+		this.rootPlayer = player;
 
 		//Build game tree
 		expandChildrenRandom(0, currentNode, player, true, probability);
@@ -52,6 +59,10 @@ public class GameTree {
 	}
 
     public Node getBestMove(int player) throws Exception{
+
+		if(this.rootPlayer != player)
+			throw new Exception("Invalid player1");
+
         Node temp = getLeaf(root, player);
 
         LinkedList<Node> children = temp.getChildren();
@@ -72,7 +83,7 @@ public class GameTree {
         LinkedList<Node> children = currentNode.getChildren();
 
         if(children.size() < 1){
-            currentNode.setVal(currentNode.calculateFitness(player, neuralNetwork));
+            currentNode.setVal(currentNode.calculateFitness(this.rootPlayer, neuralNetwork));
 
             return currentNode;
         }
@@ -114,7 +125,7 @@ public class GameTree {
     //Alpha-Beta Pruning
     public Double expandChildrenAlphaBeta(int level, Node currentNode, int player, boolean max) throws Exception{
         if (level >= PLY_DEPTH) {
-			double fitness = currentNode.calculateFitness(player, neuralNetwork);
+			double fitness = currentNode.calculateFitness(this.rootPlayer, neuralNetwork);
             currentNode.setVal(fitness);
             return fitness;
         }
@@ -139,7 +150,7 @@ public class GameTree {
         }
 
         if(currentNode.getValue() == null)
-            currentNode.setVal(currentNode.calculateFitness(player, neuralNetwork));
+            currentNode.setVal(currentNode.calculateFitness(this.rootPlayer, neuralNetwork));
 
         return currentNode.getValue();
     }
@@ -274,96 +285,91 @@ public class GameTree {
 		}
     }
 
-//    public static void main(String[] args) throws Exception{
-//        Checkers game = new Checkers();
-//
-//        int[][] tempBoard = game.getCurrentBoardState();
-//
-//        for(int i = 0; i < tempBoard.length; i++)
-//        {
-//            for(int k = 0; k < tempBoard[i].length; k++)
-//            {
-//                if((i == 3 || i == 5) && (k == 2 || k == 4))
-//                {
-//                    tempBoard[i][k] = 3;
-//                }
-//                else if(i == 4 && k == 3){
-//                    tempBoard[i][k] = 1;
-//                }
-//                else if(i == 6 && k == 1){
-//                    tempBoard[i][k] = 1;
-//                }
-//                else if(i == 1 && k == 6){
-//                    tempBoard[i][k] = 4;
-//                }
-//                else if(i == 5 && k == 6){
-//                    tempBoard[i][k] = 4;
-//                }
-//                else if(i == 5 && k == 6){
-//                    tempBoard[i][k] = 4;
-//                }
-//                else if(i == 3 && k == 6){
-//                    tempBoard[i][k] = 4;
-//                }
-//                else if(i == 1 && k == 4){
-//                    tempBoard[i][k] = 4;
-//                }
-//                else if(i == 1 && k == 0){
-//                    tempBoard[i][k] = 4;
-//                }
-//                else if( tempBoard[i][k] != -1)
-//                    tempBoard[i][k] = 0;
-//            }
-//        }
-//        game.setCurrentBoardState(tempBoard);
-//
-//		GameTree gameTree;
-//		Node nextMove;
-//
-//		int count = 0;
-//		while(count < 100)
-//		{
-//			if(game.hasLost(1))
-//			{
-//				System.out.println("Player 1 Lost the game");
-//				break;
-//			}
-//			else
-//			{
-//				System.out.println("1______________________________");
-//				gameTree = new GameTree(game);
-//				gameTree.generateTree(1, 6, true);
-//
-//
-//				nextMove = gameTree.getBestMove(1);
-//
-//				nextMove.printState();
-//
-//
-//				game = nextMove.getGame();
-//			}
-//
-//			if(game.hasLost(2))
-//			{
-//				System.out.println("Player 2 Lost the game");
-//				break;
-//			}
-//			else
-//			{
-//
-//				System.out.println("2______________________________");
-//				gameTree = new GameTree(game);
-//				gameTree.generateTree(2, 1, true);
-//
-//
-//				nextMove = gameTree.getBestMove(2);
-//
-//				nextMove.printState();
-//				game = nextMove.getGame();
-//			}
-//			count++;
-//
-//		}
-//		System.out.println("Done");
-//    }
+	public void printTree(int player) throws Exception{
+		int level = 0;
+		Node temp = printChildren(root, player, level);
+
+		LinkedList<Node> children = temp.getChildren();
+
+		for(int i = 0; i < children.size(); i++)
+		{
+			if(children.get(i) == temp.getBestChild()) {
+				if(!children.get(i).getValue().equals(temp.getValue()))
+					throw new Exception("Invalid best child for root node!");
+			}
+		}
+	}
+
+	public Node printChildren(Node currentNode, int player, int level) throws Exception{
+		LinkedList<Node> children = currentNode.getChildren();
+
+		if(children.size() < 1){
+			currentNode.setVal(currentNode.calculateFitness(this.rootPlayer, neuralNetwork));
+			System.out.println("Level: " + level);
+			System.out.println("Player: " + player);
+			System.out.println("Value: " + currentNode.getValue());
+			currentNode.printState();
+
+			return currentNode;
+		}
+
+		for(int i = 0; i < children.size(); i++)
+		{
+			Node temp = printChildren(children.get(i), Checkers.getOpponent(player), level + 1);
+			currentNode.updateValue(temp.getValue(), temp);
+
+		}
+		System.out.println("Level: " + level);
+		System.out.println("Player: " + player);
+		System.out.println("Value: " + currentNode.getValue());
+		currentNode.printState();
+		return currentNode;
+	}
+
+    public static void main(String[] args) throws Exception{
+        Checkers game = new Checkers();
+
+        int[][] tempBoard = game.getCurrentBoardState();
+
+        for(int i = 0; i < tempBoard.length; i++)
+        {
+            for(int k = 0; k < tempBoard[i].length; k++)
+            {
+                if(i == 6 && k == 5)
+                {
+                    tempBoard[i][k] = 1;
+                }
+				else if(i == 3 && k == 0){
+					tempBoard[i][k] = 3;
+				}
+				else if(i == 5 && k == 0){
+					tempBoard[i][k] = 1;
+				}
+				else if(i == 6 && k == 1){
+					tempBoard[i][k] = 1;
+				}
+				else if(i == 6 && k == 3){
+					tempBoard[i][k] = 1;
+				}
+				else if(tempBoard[i][k] != -1)
+					tempBoard[i][k] = 0;
+            }
+        }
+        game.setCurrentBoardState(tempBoard);
+
+		GameTree gameTree;
+		Node nextMove;
+
+		gameTree = new GameTree(game, null);
+		gameTree.generateTree(1, 4, false);
+
+		gameTree.printTree(1);
+
+		nextMove = gameTree.getBestMove(1);
+
+
+		game = nextMove.getGame();
+
+		System.out.println("Done");
+    }
 }
