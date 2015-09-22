@@ -152,7 +152,7 @@ public class PSO
 			Particle nBest = neighbourhood.getNeigbourhoodBest(swarm[i], minimisation);
 
 			//  2) Update particle velocity
-			swarm[i].updateVelocity(nBest.getPBestPosition());
+			swarm[i].updateVelocity(nBest.getPosition());
 
 			//  3) update particle position
 			swarm[i].updatePosition();
@@ -169,9 +169,9 @@ public class PSO
 
 		ExecutorService threadPool = Executors.newFixedThreadPool(processors);
 		Set<Future<Particle>> set = new HashSet<>();
-
+		int count = 0;
 		//  1) set each particle's pBest
-		for (int i = 0, count = 0; i < tempSwarm.size(); i+=2, count++)
+		for (int i = 0; i < tempSwarm.size(); i+=2, count++)
 		{
 			Double[] position = tempSwarm.remove(i);
 
@@ -185,6 +185,10 @@ public class PSO
 			tempSwarm.add(i, position);
 		}
 
+		if(count != swarm.length)
+			throw new Exception("Invalid count!");
+
+		count = 0;
 		for (Future<Particle> future : set) {
 			Particle particle = future.get();
 			Double newFitness = particle.getFitnessValue();
@@ -207,9 +211,13 @@ public class PSO
 					particle.setPBestValue(newFitness);
 				}
 			}
+			count++;
 		}
 
 		threadPool.shutdown();
+
+		if(count != swarm.length)
+			throw new Exception("Invalid count!");
 
 		return swarm;
 	}
