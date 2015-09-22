@@ -54,5 +54,41 @@
             <measurements idref="measurements" />
             <output format="TXT" file="data/normal5.txt"/>
         </simulation>
+        <simulation samples="30">
+            <algorithm idref="normal"/>
+            <problem idref="checkers"/>
+            <measurements idref="measurements" />
+            <output format="TXT" file="data/normal6.txt"/>
+        </simulation>
+        <simulation samples="30">
+            <algorithm idref="normal"/>
+            <problem idref="checkers"/>
+            <measurements idref="measurements" />
+            <output format="TXT" file="data/normal7.txt"/>
+        </simulation>
+        <simulation samples="30">
+            <algorithm idref="normal"/>
+            <problem idref="checkers"/>
+            <measurements idref="measurements" />
+            <output format="TXT" file="data/normal8.txt"/>
+        </simulation>
+        <simulation samples="30">
+            <algorithm idref="normal"/>
+            <problem idref="checkers"/>
+            <measurements idref="measurements" />
+            <output format="TXT" file="data/normal9.txt"/>
+        </simulation>
+        <simulation samples="30">
+            <algorithm idref="normal"/>
+            <problem idref="checkers"/>
+            <measurements idref="measurements" />
+            <output format="TXT" file="data/normal10.txt"/>
+        </simulation>
+        <simulation samples="30">
+            <algorithm idref="normal"/>
+            <problem idref="checkers"/>
+            <measurements idref="measurements" />
+            <output format="TXT" file="data/normal11.txt"/>
+        </simulation>
     </simulations>
 </simulator>

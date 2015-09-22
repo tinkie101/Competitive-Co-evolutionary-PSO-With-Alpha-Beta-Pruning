@@ -44,7 +44,7 @@ public class PlayGame
 			{
 				if (game.hasLost(PLAYER1))
 				{
-					//Update performance measure for Loss
+					//Update performance measure for Loss (player 1)
 					return 0;
 				} else
 				{
@@ -65,7 +65,7 @@ public class PlayGame
 
 				if (game.hasLost(PLAYER2))
 				{
-					//Update performance measure for Win
+					//Update performance measure for Win (player 1)
 					return 1;
 				} else
 				{
@@ -91,6 +91,7 @@ public class PlayGame
 			e.printStackTrace();
 			System.exit(1);
 		}
+		//draw (player 1)
 		return 2;
 	}
 }

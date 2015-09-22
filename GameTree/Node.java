@@ -77,7 +77,7 @@ public class Node{
     }
 
     public Double calculateStaticFitness(int player) throws Exception{
-        System.out.println("Calucluating Static Fitness...");
+        System.out.println("Calculating Static Fitness...");
         Double result = (double)gameState.getPlayerPieceCount(player);
 
         int opponent = Checkers.getOpponent(player);
