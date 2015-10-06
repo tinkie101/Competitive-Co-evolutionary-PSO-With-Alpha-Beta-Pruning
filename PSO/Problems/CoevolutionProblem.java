@@ -47,7 +47,7 @@ public class CoevolutionProblem extends Problem
 		this.probability = probability;
 	}
 
-	public static NeuralNetwork getNewNeuralNetwork() throws Exception{
+	public NeuralNetwork getNewNeuralNetwork() throws Exception{
 		return new NeuralNetwork(NUM_LAYERS, numLayerNodes, (BIAS == 1));
 	}
 
@@ -129,7 +129,7 @@ public class CoevolutionProblem extends Problem
 
 	/**
 	 loss	=	0
-	 win		=	1
+	 win	=	1
 	 draw	=	2
 	 */
 	private Double getResultScore(int val) throws Exception
