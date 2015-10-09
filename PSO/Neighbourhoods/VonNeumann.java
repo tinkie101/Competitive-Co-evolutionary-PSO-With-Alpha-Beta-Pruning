@@ -114,7 +114,7 @@ public class VonNeumann extends Neighbourhood
 
 		for(int i = 0; i < neighbours.size(); i++)
 		{
-			Double temp = neighbours.get(i).getPBestValue();
+			Double temp = neighbours.get(i).getFitnessValue();
 			if(minimisation){
 				if(temp < tempBestVal){
 					tempBestVal = temp;
