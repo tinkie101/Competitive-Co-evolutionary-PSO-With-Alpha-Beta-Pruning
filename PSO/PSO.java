@@ -18,17 +18,18 @@ import java.util.concurrent.Future;
 
 public class PSO
 {
+
 	class CalculateFitnessThread implements Callable
 	{
-		private Double[] position;
 		private LinkedList<Double[]> swarmPositions;
 		private Particle particle;
+		private int removePos;
 
-		CalculateFitnessThread(final Double[] position, final LinkedList<Double[]> swarmPositions, Particle particle)
+		CalculateFitnessThread(final int removePos, final LinkedList<Double[]> swarmPositions, Particle particle)
 		{
-			this.position = position;
 			this.swarmPositions = swarmPositions;
 			this.particle = particle;
+			this.removePos = removePos;
 		}
 
 		@Override
@@ -36,8 +37,14 @@ public class PSO
 		{
 			try
 			{
-				Double temp = problem.calculateFitness(position, swarmPositions);
+				Double[] position = swarmPositions.remove(removePos);
+				Double temp = problem.calculateFitness(particle.getPosition(), (LinkedList<Double[]>) swarmPositions.clone());
 				particle.setFitnessValue(temp);
+				swarmPositions.add(removePos, position);
+				swarmPositions.remove(removePos + 1);
+				Double tempPBest = problem.calculateFitness(particle.getPBestPosition(), swarmPositions);
+				particle.setPBestValue(tempPBest);
+
 				return particle;
 			}
 			catch (Exception e){
@@ -48,10 +55,6 @@ public class PSO
 			return null;
 		}
 	}
-
-
-
-
 
 
 	private int numParticles;
@@ -95,16 +98,12 @@ public class PSO
 		//Calculate each particle's initial pBest
 		for (int i = 0, count = 0; i < tempSwarm.size(); i+=2, count++)
 		{
-			Double[] position = tempSwarm.remove(i);
-
-			if(tempSwarm.size() != (swarm.length*2)-1)
+			if(tempSwarm.size() != swarm.length*2)
 				throw new Exception("Invalid tempSwarm size!");
 
-			Callable<Particle> callable =  new CalculateFitnessThread(position, (LinkedList<Double[]>) tempSwarm.clone(), swarm[count]);
+			Callable<Particle> callable =  new CalculateFitnessThread(i, (LinkedList<Double[]>) tempSwarm.clone(), swarm[count]);
 			Future<Particle> future = threadPool.submit(callable);
 			set.add(future);
-
-			tempSwarm.add(i,position);
 		}
 
 		for (Future<Particle> future : set) {
@@ -114,7 +113,7 @@ public class PSO
 
 		threadPool.shutdown();
 
-		neighbourhood.setParticles(swarm);
+		this.neighbourhood.setParticles(swarm);
 	}
 
 	public Particle getGlobalBest()
@@ -143,10 +142,38 @@ public class PSO
 		return tempGBest;
 	}
 
+	public Particle getGlobalWorst()
+	{
+		Particle tempGWorst = null;
+		boolean first = true;
+
+		for (int i = 0; i < numParticles; i++)
+		{
+			if (!minimisation)
+			{
+				if (first || tempGWorst.getFitnessValue() > swarm[i].getFitnessValue())
+				{
+					first = false;
+					tempGWorst = swarm[i];
+				}
+			} else
+			{
+				if (first || tempGWorst.getFitnessValue() < swarm[i].getFitnessValue())
+				{
+					first = false;
+					tempGWorst = swarm[i];
+				}
+			}
+		}
+		return tempGWorst;
+	}
+
 
 	//Run Update Step and return the updated swarm
 	public Particle[] runUpdateStep() throws Exception
 	{
+		Double[][] newSwarm = new Double[swarm.length][];
+
 		for (int i = 0; i < numParticles; i++)
 		{
 			Particle nBest = neighbourhood.getNeigbourhoodBest(swarm[i], minimisation);
@@ -155,9 +182,12 @@ public class PSO
 			swarm[i].updateVelocity(nBest.getPosition());
 
 			//  3) update particle position
-			swarm[i].updatePosition();
+			newSwarm[i] = swarm[i].calculateNewPosition();
 		}
 
+		for(int i = 0; i < swarm.length; i++){
+			swarm[i].setPosition(newSwarm[i]);
+		}
 
 		LinkedList<Double[]> tempSwarm = new LinkedList<>();
 
@@ -173,16 +203,12 @@ public class PSO
 		//  1) set each particle's pBest
 		for (int i = 0; i < tempSwarm.size(); i+=2, count++)
 		{
-			Double[] position = tempSwarm.remove(i);
-
-			if(tempSwarm.size() != (swarm.length*2)-1)
+			if(tempSwarm.size() != swarm.length*2)
 				throw new Exception("Invalid tempSwarm size!");
 
-			Callable<Particle> callable =  new CalculateFitnessThread(position, (LinkedList<Double[]>) tempSwarm.clone(), swarm[count]);
+			Callable<Particle> callable =  new CalculateFitnessThread(i, (LinkedList<Double[]>) tempSwarm.clone(), swarm[count]);
 			Future<Particle> future = threadPool.submit(callable);
 			set.add(future);
-
-			tempSwarm.add(i, position);
 		}
 
 		if(count != swarm.length)
