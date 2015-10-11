@@ -13,21 +13,27 @@ public class PlayGame
 
 	public int MAX_NUM_MOVES;
 
-	private int PLY_DEPTH;
-	private Boolean ALPHA_BETA;
+	private int PLY_DEPTH1;
+	private int PLY_DEPTH2;
+
+	private Boolean ALPHA_BETA1;
+	private Boolean ALPHA_BETA2;
+
 	private double probability;
 
 
 	private NeuralNetwork tempPlayer1NeuralNet;
 	private NeuralNetwork tempPlayer2NeuralNet;
 
-	public PlayGame(final NeuralNetwork tempPlayer1NeuralNet, final NeuralNetwork tempPlayer2NeuralNet, int ply_depth, Boolean alpha_beta, int max_moves, double probability){
+	public PlayGame(final NeuralNetwork tempPlayer1NeuralNet, final NeuralNetwork tempPlayer2NeuralNet, int ply_depth1, int ply_depth2, Boolean alpha_beta1, Boolean alpha_beta2, int max_moves, double probability){
 		this.tempPlayer1NeuralNet =  tempPlayer1NeuralNet;
 		this.tempPlayer2NeuralNet = tempPlayer2NeuralNet;
 
 		this.MAX_NUM_MOVES = max_moves;
-		this.PLY_DEPTH = ply_depth;
-		this.ALPHA_BETA = alpha_beta;
+		this.PLY_DEPTH1 = ply_depth1;
+		this.PLY_DEPTH2 = ply_depth2;
+		this.ALPHA_BETA1 = alpha_beta1;
+		this.ALPHA_BETA2 = alpha_beta2;
 		this.probability = probability;
 	}
 
@@ -52,12 +58,12 @@ public class PlayGame
 					if(tempPlayer1NeuralNet == null){
 						nextMove = gameTree.getRandomMove(PLAYER1);
 					}
-					else if(ALPHA_BETA == null){
-						gameTree.generateRandomPruneTree(PLAYER1, PLY_DEPTH, probability);
+					else if(ALPHA_BETA1 == null){
+						gameTree.generateRandomPruneTree(PLAYER1, PLY_DEPTH1, probability);
 						nextMove = gameTree.getBestMove(PLAYER1);
 					}
 					else{
-						gameTree.generateTree(PLAYER1, PLY_DEPTH, ALPHA_BETA);
+						gameTree.generateTree(PLAYER1, PLY_DEPTH1, ALPHA_BETA1);
 						nextMove = gameTree.getBestMove(PLAYER1);
 					}
 					game = nextMove.getGame();
@@ -74,12 +80,12 @@ public class PlayGame
 					if(tempPlayer2NeuralNet == null){
 						nextMove = gameTree.getRandomMove(PLAYER2);
 					}
-					else if(ALPHA_BETA == null){
-						gameTree.generateRandomPruneTree(PLAYER2, PLY_DEPTH, probability);
+					else if(ALPHA_BETA2 == null){
+						gameTree.generateRandomPruneTree(PLAYER2, PLY_DEPTH2, probability);
 						nextMove = gameTree.getBestMove(PLAYER2);
 					}
 					else {
-						gameTree.generateTree(PLAYER2, PLY_DEPTH, ALPHA_BETA);
+						gameTree.generateTree(PLAYER2, PLY_DEPTH2, ALPHA_BETA2);
 						nextMove = gameTree.getBestMove(PLAYER2);
 					}
 					game = nextMove.getGame();
