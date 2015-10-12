@@ -119,7 +119,7 @@ public class CoevolutionProblem extends Problem
 			tempPlayer2NeuralNet.setWeights(tempPlayer2Weights);
 
 			//Play Game
-			PlayGame tempGame = new PlayGame(tempPlayer1NeuralNet, tempPlayer2NeuralNet, PLY_DEPTH, ALPHA_BETA, max_moves, probability);
+			PlayGame tempGame = new PlayGame(tempPlayer1NeuralNet, tempPlayer2NeuralNet, PLY_DEPTH, PLY_DEPTH, ALPHA_BETA, ALPHA_BETA, max_moves, probability);
 			score += getResultScore(tempGame.play());
 		}
 
