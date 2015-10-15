@@ -17,7 +17,7 @@
     <problems>
         <problem id="checkers" class="Game.Checkers"/>
     </problems>
-    <measurements id="measurements" class="simulator.MeasurementSuite" resolution="500">
+    <measurements id="measurements" class="simulator.MeasurementSuite" resolution="200">
         <addMeasurement class="measurement.pso.Fitness"/>
         <addMeasurement class="measurement.player1.FMeasure"/>
         <addMeasurement class="measurement.player2.FMeasure"/>
