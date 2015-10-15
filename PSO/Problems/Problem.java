@@ -9,7 +9,7 @@ public abstract class Problem
 {
 	protected final int numDimensions;
 
-	protected final double c1 = 1.4;
+	protected final double c1 = 1.2;
 	protected final double c2 = 1.2;
 
 	public Problem(int numDimensions)
