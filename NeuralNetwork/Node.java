@@ -89,13 +89,23 @@ public class Node {
     //TODO use strategy pattern
     private double activationFunction()
     {
-        return calculateSigmoid();
+        return getNetInput();
+//        return calculateSigmoid();
     }
 
     //TODO
     private double calculateSigmoid() {
         double net = getNetInput();
         return 1.0d/(1.0d + Math.exp(-1.0d * net));
+    }
+
+    private double calculateActivationLOG() {
+        double net = getNetInput();
+
+        if(net > 0)
+            return Math.log(1.0d + net);
+        else
+            return Math.log(1.0d - net);
     }
 
     /*
