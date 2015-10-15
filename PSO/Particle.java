@@ -83,6 +83,14 @@ public class Particle
 		return result;
 	}
 
+	public void setPosition(Double[] newPosition) throws Exception{
+
+		if(newPosition.length != this.position.length)
+			throw new Exception("Invalid position!");
+
+		this.position = newPosition;
+	}
+
 
 	public void updateVelocity(Double[] nBest) throws Exception
 	{
@@ -91,13 +99,17 @@ public class Particle
 			double r1 = RandomGenerator.getInstance().getRandomDoubleValue();
 			double r2 = RandomGenerator.getInstance().getRandomDoubleValue();
 
-			velocity[i] = velocity[i] + c1 * r1 * (pBestPosition[i] - position[i]) + c2 * r2 * (nBest[i] - position[i]);
+			velocity[i] = 0.7d*velocity[i] + (c1 * r1 * (pBestPosition[i] - position[i])) + (c2 * r2 * (nBest[i] - position[i]));
+
+			//TODO Velocity clamping, reset to 0
+			if(velocity[i] > 0.2d || velocity[i] < -0.2d)
+				velocity[i] = 0.0d;
 		}
 	}
 
-	public void updatePosition() throws Exception
+	public Double[] calculateNewPosition() throws Exception
 	{
-		position = vectorAdd(position, velocity);
+		return vectorAdd(position, velocity);
 	}
 
 	/*
