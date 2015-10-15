@@ -53,6 +53,8 @@ public class VonNeumann extends Neighbourhood
 
 		LinkedList<Particle> result = new LinkedList<Particle>();
 
+		result.add(particle);
+
 		for(int i = 0; i < x; i++){
 			for(int l = 0; l < y; l++)
 			{
