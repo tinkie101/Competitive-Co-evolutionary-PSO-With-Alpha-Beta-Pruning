@@ -1,6 +1,7 @@
 package CoEvolution;
 
 import GameTree.PlayGame;
+import Main.XMLParser.Problem;
 import NeuralNetwork.NeuralNetwork;
 import PSO.Neighbourhoods.Neighbourhood;
 import PSO.Neighbourhoods.VonNeumann;
@@ -18,7 +19,7 @@ public class Coevolution {
     public static final int NUM_CONTROL_GAMES = 10000;
     public static final int NUM_RUNS = 1;
     public static int MAX_NUM_MOVES = 50;
-    public static int PLY_DEPTH = 4;
+    public static int PLY_DEPTH = 2;
     private static int NUM_PARTICLES = 27;
 
     private static int x = 3, y = 3, z = 3;
@@ -32,6 +33,8 @@ public class Coevolution {
     }
 
     public void runCoevolution(int numEpochs, String output) throws Exception {
+
+        System.out.println(numEpochs + "; " + AlphaBeta + "; " + probability);
 
         double finalResult = 0.0d;
         StringBuilder stringBuilder = new StringBuilder();
@@ -64,6 +67,8 @@ public class Coevolution {
 
             Particle gBestStart = pso.getGlobalBest();
             double startVal = gBestStart.getPBestValue();
+
+
             System.out.println("Training ");
             DecimalFormat df = new DecimalFormat("#.00");
             //2
@@ -84,17 +89,23 @@ public class Coevolution {
             stringBuilder.append(gBest.getPBestValue() + " ");
 
             //4
-            NeuralNetwork tempNeuralNet = CoevolutionProblem.getNewNeuralNetwork();
+            NeuralNetwork tempNeuralNet = problem.getNewNeuralNetwork();
             Double[][][] tempPlayerWeights = tempNeuralNet.getWeights();
 
+            System.out.print("{");
             int count = 0;
             for (int n = 0; n < tempPlayerWeights.length; n++) {
                 for (int l = 0; l < tempPlayerWeights[n].length; l++) {
                     for (int k = 0; k < tempPlayerWeights[n][l].length; k++) {
                         tempPlayerWeights[n][l][k] = position[count++];
+
+
+                        System.out.print(position[count-1] + ", ");
+
                     }
                 }
             }
+            System.out.print("}\n");
 
             tempNeuralNet.setWeights(tempPlayerWeights);
 
@@ -103,9 +114,13 @@ public class Coevolution {
                 double percentage = (double) i / (double) NUM_CONTROL_GAMES * 100.0d;
                 System.out.print("\r" + df.format(percentage) + "%");
 
-                PlayGame tempGame = new PlayGame(tempNeuralNet, null, PLY_DEPTH, AlphaBeta, MAX_NUM_MOVES, probability);
+                NeuralNetwork untrainedNeuralNet = problem.getNewNeuralNetwork();
 
-                switch (tempGame.play()) {
+                PlayGame tempGame = new PlayGame(tempNeuralNet, null, PLY_DEPTH, PLY_DEPTH, AlphaBeta, false, MAX_NUM_MOVES, probability);
+
+                int outcome = tempGame.play();
+
+                switch (outcome) {
                     case 0:
                         losePlayer1++;
                         break;
@@ -122,6 +137,19 @@ public class Coevolution {
             System.out.print("\r" + df.format(100.0d) + "%");
             System.out.println();
 
+            double Player1WinScore = (double) winPlayer1 / (double) NUM_CONTROL_GAMES * 3.0d;
+            double Player1LoseScore = (double) losePlayer1 / (double) NUM_CONTROL_GAMES * 1.0d;
+            double Player1DrawScore = (double) drawPlayer1 / (double) NUM_CONTROL_GAMES * 2.0d;
+            double Player1Score = Player1DrawScore + Player1LoseScore + Player1WinScore;
+
+            System.out.println(winPlayer1 + "; " + drawPlayer1 + "; " + losePlayer1);
+
+
+            double tempScore = ((2.0d) * (Player1Score - 1.0d)) / (2.0d);
+            System.out.println(tempScore);
+            tempScore = tempScore / 2.0d * 100.0d;
+            stringBuilder.append(tempScore + " ");
+
             //5
             System.out.println("Playing as Player 2");
 
@@ -129,9 +157,14 @@ public class Coevolution {
 
                 double percentage = (double) i / (double) NUM_CONTROL_GAMES * 100.0d;
                 System.out.print("\r" + df.format(percentage) + "%");
-                PlayGame tempGame = new PlayGame(null, tempNeuralNet, PLY_DEPTH, AlphaBeta, MAX_NUM_MOVES, probability);
 
-                switch (tempGame.play()) {
+                NeuralNetwork untrainedNeuralNet = problem.getNewNeuralNetwork();
+
+                PlayGame tempGame = new PlayGame(null, tempNeuralNet, PLY_DEPTH, PLY_DEPTH, false, AlphaBeta, MAX_NUM_MOVES, probability);
+
+                int outcome = tempGame.play();
+
+                switch (outcome) {
                     case 0:
                         winPlayer2++;
                         break;
@@ -148,15 +181,6 @@ public class Coevolution {
             System.out.print("\r" + df.format(100.0d) + "%");
             System.out.println();
 
-            double Player1WinScore = (double) winPlayer1 / (double) NUM_CONTROL_GAMES * 3.0d;
-            double Player1LoseScore = (double) losePlayer1 / (double) NUM_CONTROL_GAMES * 1.0d;
-            double Player1DrawScore = (double) drawPlayer1 / (double) NUM_CONTROL_GAMES * 2.0d;
-            double Player1Score = Player1DrawScore + Player1LoseScore + Player1WinScore;
-
-            double tempScore = ((2.0d) * (Player1Score - 1.0d)) / (2.0d);
-            tempScore = tempScore / 2.0d * 100.0d;
-
-            stringBuilder.append(tempScore + " ");
 
             double Player2WinScore = (double) winPlayer2 / (double) NUM_CONTROL_GAMES * 3.0d;
             double Player2LoseScore = (double) losePlayer2 / (double) NUM_CONTROL_GAMES * 1.0d;
@@ -164,7 +188,10 @@ public class Coevolution {
             double Player2Score = Player2DrawScore + Player2LoseScore + Player2WinScore;
 
 
+            System.out.println(winPlayer2 + "; " + drawPlayer2 + "; " + losePlayer2);
+
             tempScore = ((2.0d) * (Player2Score - 1.0d)) / (2.0d);
+            System.out.println(tempScore);
             tempScore = tempScore / 2.0d * 100.0d;
 
             stringBuilder.append(tempScore + " ");
@@ -175,15 +202,14 @@ public class Coevolution {
             finalResult += finalScore;
             System.out.println("==========================================");
             System.out.println("Final Score:" + finalScore);
-            //TODO
             stringBuilder.append(finalScore);
             System.out.println("==========================================\n");
 
             FileHandler.writeFile(output, stringBuilder.toString());
         }
 
-        System.out.println("==========================================");
-        finalResult = finalResult / NUM_RUNS;
-        System.out.println("Final Result:" + finalResult);
+       // System.out.println("==========================================");
+       // finalResult = finalResult / NUM_RUNS;
+       // System.out.println("Final Result:" + finalResult);
     }
 }
