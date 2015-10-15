@@ -15,7 +15,7 @@ public class CoevolutionProblem extends Problem
 
 	public static final int NUM_LAYERS = 3;
 	public static final int NUM_INPUTS = 32;
-	public static final int NUM_HIDDEN = 5;
+	public static final int NUM_HIDDEN = 10;
 	public static final int NUM_OUTPUT = 1;
 
 	public static final int BIAS = 1;
@@ -121,6 +121,9 @@ public class CoevolutionProblem extends Problem
 			//Play Game
 			PlayGame tempGame = new PlayGame(tempPlayer1NeuralNet, tempPlayer2NeuralNet, PLY_DEPTH, PLY_DEPTH, ALPHA_BETA, ALPHA_BETA, max_moves, probability);
 			score += getResultScore(tempGame.play());
+
+			tempGame = new PlayGame(tempPlayer2NeuralNet, tempPlayer1NeuralNet, PLY_DEPTH, PLY_DEPTH, ALPHA_BETA, ALPHA_BETA, max_moves, probability);
+			score += getReverseResultScore(tempGame.play());
 		}
 
 		return score;
@@ -137,6 +140,16 @@ public class CoevolutionProblem extends Problem
 		switch (val){
 			case 0: return -2.0d;
 			case 1: return 1.0d;
+			case 2: return 0.0d;
+			default: throw  new Exception("Invalid result!");
+		}
+	}
+
+	private Double getReverseResultScore(int val) throws Exception
+	{
+		switch (val){
+			case 0: return 1.0d;
+			case 1: return -2.0d;
 			case 2: return 0.0d;
 			default: throw  new Exception("Invalid result!");
 		}
